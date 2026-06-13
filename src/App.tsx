@@ -26,7 +26,7 @@ export default function App() {
   const [view, setView] = useState<ViewId>("overview");
   const [state, setState] = usePersistentState<AppState>("civora-app-state-v1", initialState);
   const [loggedIn, setLoggedIn] = usePersistentState<{ user: string; role: string } | null>("civora-auth", null);
-  const { zones, lastUpdated, online, liveClock } = useLiveTelemetry();
+  const { zones, weather, equipment, notifications, lastUpdated, online, liveClock } = useLiveTelemetry();
 
   useEffect(() => {
     document.documentElement.dataset.theme = state.theme;
@@ -84,6 +84,9 @@ export default function App() {
       lastUpdated={lastUpdated}
       online={online}
       liveClock={liveClock}
+      liveNotifications={notifications}
+      weather={weather}
+      equipment={equipment}
       onCreateTask={createTask}
       user={loggedIn}
       onLogout={() => setLoggedIn(null)}
@@ -95,6 +98,8 @@ export default function App() {
             zones={zones}
             alerts={state.alerts}
             tasks={state.tasks}
+            weather={weather}
+            equipment={equipment}
             setView={setView}
             acknowledgeAlert={acknowledgeAlert}
             toggleTask={toggleTask}

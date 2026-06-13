@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { zones } from "../data/demo";
+import { equipmentTelemetryInit, weatherData as staticWeather, zones } from "../data/demo";
+import type { EquipmentTelemetry, NotificationEvent, WeatherData } from "../types";
+
+function pick<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
 
 export function useLiveTelemetry() {
   const [tick, setTick] = useState(0);
@@ -39,6 +44,54 @@ export function useLiveTelemetry() {
     [tick]
   );
 
+  const liveWeather = useMemo((): WeatherData => {
+    const hour = liveClock.getHours();
+    const wave = Math.sin(tick / 4) * 2;
+    const tempVar = Math.sin(hour / 24 * Math.PI * 2) * 3;
+    return {
+      ...staticWeather,
+      temperature: Math.round((staticWeather.temperature + wave + tempVar) * 10) / 10,
+      humidity: Math.max(40, Math.min(95, Math.round(staticWeather.humidity + wave * 3))),
+      windSpeed: Math.max(3, Math.round(staticWeather.windSpeed + Math.sin(tick / 3) * 4))
+    };
+  }, [tick, liveClock]);
+
+  const liveEquip = useMemo((): EquipmentTelemetry[] =>
+    equipmentTelemetryInit.map((eq) => ({
+      ...eq,
+      fuelLevel: Math.max(5, Math.min(100, eq.fuelLevel - Math.floor(tick / 60) % 3 + (Math.random() > 0.8 ? -1 : 0))),
+      operatingHours: eq.operatingHours + tick * 2 / 3600,
+      lastCommunication: new Date(lastUpdated.getTime() - Math.floor(Math.random() * 12000))
+    })),
+  [tick, lastUpdated]);
+
+  const liveNotifications = useMemo((): NotificationEvent[] => {
+    const events: NotificationEvent[] = [];
+    if (tick > 0 && tick % 10 === 0) {
+      events.push({
+        id: `notif-${tick}`,
+        title: pick(["Heat stress threshold approaching", "PPE compliance check recommended", "Tool vibration anomaly detected", "Delivery conflict forecast", "Material passport verified"]),
+        detail: pick(["WBGT trend requires attention in MEP Corridor", "Vision model flags missing eye protection near cutting station", "Angle grinder vibration 17% above baseline", "Concrete truck arrival overlaps with crane exclusion", "Chain-of-custody record updated for steel batch"]),
+        type: "alert",
+        severity: tick % 20 === 0 ? "critical" : tick % 15 === 0 ? "warning" : "info",
+        time: new Date(),
+        read: false
+      });
+    }
+    if (tick > 0 && tick % 30 === 0) {
+      events.push({
+        id: `notif-milestone-${tick}`,
+        title: "Project milestone reached",
+        detail: `Phase progress updated to ${Math.round(60 + tick / 5)}% complete`,
+        type: "milestone",
+        severity: "success",
+        time: new Date(),
+        read: false
+      });
+    }
+    return events;
+  }, [tick]);
+
   const getZoneById = useCallback(
     (id: string) => liveZones.find((z) => z.id === id),
     [liveZones]
@@ -46,6 +99,9 @@ export function useLiveTelemetry() {
 
   return {
     zones: liveZones,
+    weather: liveWeather,
+    equipment: liveEquip,
+    notifications: liveNotifications,
     lastUpdated,
     online: navigator.onLine,
     liveClock,

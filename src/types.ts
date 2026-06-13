@@ -116,6 +116,55 @@ export interface ChatMessage {
   time: string;
 }
 
+export interface WeatherData {
+  condition: "sunny" | "cloudy" | "rainy" | "stormy" | "hazy";
+  temperature: number;
+  humidity: number;
+  windSpeed: number;
+  uvIndex: number;
+  forecast: Array<{ day: string; high: number; low: number; condition: string }>;
+  warnings: Array<{ type: string; severity: RiskLevel; text: string }>;
+}
+
+export interface NotificationEvent {
+  id: string;
+  title: string;
+  detail: string;
+  type: "alert" | "milestone" | "system" | "update";
+  severity: "info" | "warning" | "critical" | "success";
+  time: Date;
+  read: boolean;
+}
+
+export interface PhotoDocument {
+  id: string;
+  title: string;
+  date: string;
+  thumbnail: string;
+  location: string;
+  category: "progress" | "safety" | "quality" | "drone";
+}
+
+export interface CostData {
+  budget: number;
+  actual: number;
+  forecast: number;
+  variance: number;
+  categories: Array<{ name: string; budget: number; actual: number }>;
+}
+
+export interface EquipmentTelemetry {
+  id: string;
+  name: string;
+  type: string;
+  status: "online" | "offline" | "maintenance";
+  battery: number;
+  fuelLevel: number;
+  operatingHours: number;
+  location: { zone: string; level: string };
+  lastCommunication: Date;
+}
+
 export interface AppState {
   selectedSite: string;
   alerts: Alert[];

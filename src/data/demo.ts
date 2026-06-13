@@ -2,11 +2,14 @@ import type {
   Activity,
   Alert,
   CarbonPoint,
+  CostData,
   Material,
   MetricPoint,
+  PhotoDocument,
   Site,
   Task,
   ToolAsset,
+  WeatherData,
   Worker,
   Zone
 } from "../types";
@@ -380,6 +383,56 @@ export const materials: Material[] = [
     circularity: 89,
     status: "available"
   }
+];
+
+export const weatherData: WeatherData = {
+  condition: "hazy",
+  temperature: 33,
+  humidity: 68,
+  windSpeed: 12,
+  uvIndex: 8,
+  forecast: [
+    { day: "Today", high: 35, low: 26, condition: "Hazy sun" },
+    { day: "Mon", high: 33, low: 25, condition: "Thunderstorms" },
+    { day: "Tue", high: 31, low: 24, condition: "Heavy rain" },
+    { day: "Wed", high: 32, low: 25, condition: "Cloudy" },
+    { day: "Thu", high: 34, low: 26, condition: "Hazy sun" }
+  ],
+  warnings: [
+    { type: "Heat stress", severity: "critical", text: "WBGT index exceeds safe threshold for sustained work between 11:00–15:00" },
+    { type: "Lightning", severity: "high", text: "Isolated thunderstorms forecast Monday afternoon — crane ops must stop" }
+  ]
+};
+
+export const costData: CostData = {
+  budget: 42800000,
+  actual: 39240000,
+  forecast: 42680000,
+  variance: 3.6,
+  categories: [
+    { name: "Structural", budget: 14200000, actual: 13100000 },
+    { name: "MEP", budget: 9800000, actual: 9150000 },
+    { name: "Finishes", budget: 7600000, actual: 6980000 },
+    { name: "Envelope", budget: 6200000, actual: 5740000 },
+    { name: "Siteworks", budget: 5000000, actual: 4270000 }
+  ]
+};
+
+export const photoDocuments: PhotoDocument[] = [
+  { id: "p-1", title: "Tower A slab pour", date: "Today 07:30", thumbnail: "", location: "Tower A", category: "progress" },
+  { id: "p-2", title: "MEP corridor rough-in", date: "Yesterday 16:10", thumbnail: "", location: "MEP Corridor", category: "progress" },
+  { id: "p-3", title: "PPE compliance check", date: "Yesterday 09:00", thumbnail: "", location: "Loading Bay", category: "safety" },
+  { id: "p-4", title: "Drone overview — level 12", date: "2 days ago", thumbnail: "", location: "Tower A", category: "drone" },
+  { id: "p-5", title: "Reclaimed steel delivery", date: "3 days ago", thumbnail: "", location: "Material Yard", category: "quality" },
+  { id: "p-6", title: "Crane inspection", date: "4 days ago", thumbnail: "", location: "Tower B", category: "safety" }
+];
+
+export const equipmentTelemetryInit = [
+  { id: "eq-1", name: "Tower crane T-01", type: "Lattice boom", status: "online" as const, battery: 100, fuelLevel: 76, operatingHours: 1420, location: { zone: "Tower A", level: "Ground" }, lastCommunication: new Date() },
+  { id: "eq-2", name: "Mobile crane MC-3", type: "All-terrain", status: "online" as const, battery: 100, fuelLevel: 62, operatingHours: 886, location: { zone: "Loading Bay", level: "Ground" }, lastCommunication: new Date() },
+  { id: "eq-3", name: "Concrete pump CP-2", type: "Truck-mounted", status: "online" as const, battery: 100, fuelLevel: 44, operatingHours: 214, location: { zone: "Tower B", level: "Ground" }, lastCommunication: new Date() },
+  { id: "eq-4", name: "Generator G-07", type: "Diesel 150kVA", status: "maintenance" as const, battery: 100, fuelLevel: 18, operatingHours: 3200, location: { zone: "Material Yard", level: "Ground" }, lastCommunication: new Date() },
+  { id: "eq-5", name: "Hoist H-02", type: "Personnel/material", status: "online" as const, battery: 100, fuelLevel: 88, operatingHours: 654, location: { zone: "Tower A", level: "Shaft B" }, lastCommunication: new Date() }
 ];
 
 export const safetyMatrix = [

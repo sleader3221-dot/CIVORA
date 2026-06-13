@@ -1,19 +1,26 @@
 import {
   AlertTriangle,
   ArrowRight,
+  CalendarDays,
+  Camera,
   Check,
   CircleDollarSign,
   Clock3,
   CloudSun,
+  Droplets,
+  Eye,
   HardHat,
   Leaf,
   Radio,
   ShieldCheck,
   Sparkles,
+  Sun,
+  ThermometerSun,
   Users,
+  Wind,
   Wrench
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Area,
   AreaChart,
@@ -23,8 +30,8 @@ import {
   XAxis,
   YAxis
 } from "recharts";
-import { activities, productivityData } from "../data/demo";
-import type { Alert, Site, Task, ViewId, Zone } from "../types";
+import { activities, costData, photoDocuments, productivityData } from "../data/demo";
+import type { Alert, EquipmentTelemetry, Site, Task, ViewId, WeatherData, Zone } from "../types";
 import { activeAlerts, calculateSafetyScore, cn } from "../lib/utils";
 import {
   MetricCard,
@@ -40,6 +47,8 @@ export function Overview({
   zones,
   alerts,
   tasks,
+  weather,
+  equipment,
   setView,
   acknowledgeAlert,
   toggleTask
@@ -48,6 +57,8 @@ export function Overview({
   zones: Zone[];
   alerts: Alert[];
   tasks: Task[];
+  weather: WeatherData;
+  equipment: EquipmentTelemetry[];
   setView: (view: ViewId) => void;
   acknowledgeAlert: (id: string) => void;
   toggleTask: (id: string) => void;
@@ -67,6 +78,9 @@ export function Overview({
   const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
   const dayName = liveClock.toLocaleDateString("en-US", { weekday: "long" });
   const dateStr = liveClock.toLocaleDateString("en-US", { day: "numeric", month: "long" });
+
+  const budgetPct = useMemo(() => Math.round((costData.actual / costData.budget) * 100), []);
+  const onlineEquip = useMemo(() => equipment.filter((e) => e.status === "online").length, [equipment]);
 
   return (
     <div className="workspace overview-workspace">
@@ -212,6 +226,115 @@ export function Overview({
             <ProgressBar label="MEP services" value={61} tone="cyan" />
             <ProgressBar label="Envelope" value={48} tone="amber" />
           </div>
+        </Panel>
+      </div>
+
+      <div className="overview-grid overview-grid--weather">
+        <Panel className="weather-card">
+          <SectionHeader
+            eyebrow="SITE WEATHER"
+            title={`${weather.temperature}°C`}
+            action={<span className="on-track"><StatusDot tone={weather.condition === "stormy" ? "red" : weather.condition === "rainy" ? "amber" : "green"} pulse /> {weather.condition}</span>}
+          />
+          <div className="weather-card__body">
+            <div className="weather-card__main">
+              <span className="weather-card__icon">
+                {weather.condition === "rainy" || weather.condition === "stormy" ? <Droplets size={28} /> : <Sun size={28} />}
+              </span>
+              <div>
+                <div className="weather-card__stats">
+                  <span><Wind size={13} /> {weather.windSpeed} km/h</span>
+                  <span><Droplets size={13} /> {weather.humidity}%</span>
+                  <span><ThermometerSun size={13} /> UV {weather.uvIndex}</span>
+                </div>
+              </div>
+            </div>
+            <div className="weather-card__forecast">
+              {weather.forecast.slice(0, 5).map((day) => (
+                <div key={day.day}>
+                  <small>{day.day}</small>
+                  <span className="weather-card__temp">{day.high}°</span>
+                  <span className="weather-card__temp weather-card__temp--low">{day.low}°</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {weather.warnings.length > 0 && (
+            <div className="weather-card__warnings">
+              {weather.warnings.map((w) => (
+                <div key={w.type} className="weather-warning">
+                  <AlertTriangle size={13} />
+                  <span><strong>{w.type}:</strong> {w.text}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Panel>
+
+        <Panel className="photo-timeline-card">
+          <SectionHeader
+            eyebrow="PHOTO DOCUMENTATION"
+            title="Site visual timeline"
+            action={
+              <button type="button" className="text-button" onClick={() => setView("twin")}>
+                <Camera size={14} /> View all
+              </button>
+            }
+          />
+          <div className="photo-timeline">
+            {photoDocuments.slice(0, 4).map((photo) => (
+              <div className="photo-item" key={photo.id}>
+                <div className="photo-item__thumb">
+                  <Camera size={18} />
+                </div>
+                <div>
+                  <strong>{photo.title}</strong>
+                  <small>{photo.date} • {photo.location}</small>
+                </div>
+                <span className="photo-item__cat">{photo.category}</span>
+              </div>
+            ))}
+          </div>
+          <button type="button" className="text-button photo-timeline__more" onClick={() => setView("twin")}>
+            View all documentation <ArrowRight size={13} />
+          </button>
+        </Panel>
+
+        <Panel className="cost-card">
+          <SectionHeader
+            eyebrow="FINANCIAL TRACKING"
+            title="Budget vs actual"
+            action={<span className="on-track">{costData.variance > 0 ? "+" : ""}{costData.variance}% variance</span>}
+          />
+          <div className="cost-card__summary">
+            <div>
+              <small>BUDGET</small>
+              <strong>RM {(costData.budget / 1e6).toFixed(1)}M</strong>
+            </div>
+            <div>
+              <small>ACTUAL</small>
+              <strong>RM {(costData.actual / 1e6).toFixed(1)}M</strong>
+            </div>
+            <div>
+              <small>FORECAST</small>
+              <strong className={costData.forecast > costData.budget ? "negative" : "positive"}>RM {(costData.forecast / 1e6).toFixed(1)}M</strong>
+            </div>
+          </div>
+          <ProgressBar label="Budget consumed" value={budgetPct} tone="lime" />
+          <div className="cost-card__categories">
+            {costData.categories.map((cat) => (
+              <div key={cat.name}>
+                <span>{cat.name}</span>
+                <div className="cost-card__bar">
+                  <span style={{ width: `${(cat.actual / cat.budget) * 100}%` }} />
+                </div>
+                <strong>{Math.round((cat.actual / cat.budget) * 100)}%</strong>
+              </div>
+            ))}
+          </div>
+          <button type="button" className="secondary-button full-button" onClick={() => setView("reports")}>
+            <CircleDollarSign size={15} /> View financial report
+          </button>
         </Panel>
       </div>
 

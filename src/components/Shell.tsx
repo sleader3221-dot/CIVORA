@@ -35,9 +35,10 @@ import {
   useState
 } from "react";
 import { sites } from "../data/demo";
-import type { Alert, ChatMessage, Site, Task, ViewId } from "../types";
+import type { Alert, ChatMessage, EquipmentTelemetry, NotificationEvent, Site, Task, ViewId, WeatherData } from "../types";
 import { activeAlerts, cn } from "../lib/utils";
 import { Panel, RiskBadge, StatusDot } from "./Primitives";
+import { useNotificationFeed } from "../hooks/useNotificationFeed";
 
 const navigation: Array<{
   id: ViewId;
@@ -66,6 +67,9 @@ type ShellProps = PropsWithChildren<{
   lastUpdated: Date;
   online: boolean;
   liveClock: Date;
+  liveNotifications: NotificationEvent[];
+  weather: WeatherData;
+  equipment: EquipmentTelemetry[];
   onCreateTask: (task: Omit<Task, "id" | "completed">) => void;
   user: { user: string; role: string } | null;
   onLogout: () => void;
@@ -84,6 +88,9 @@ export function Shell({
   lastUpdated,
   online,
   liveClock,
+  liveNotifications,
+  weather,
+  equipment,
   onCreateTask,
   user,
   onLogout
@@ -96,6 +103,7 @@ export function Shell({
   const [taskOpen, setTaskOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const [profileMenu, setProfileMenu] = useState(false);
+  const { active: liveToast, dismiss: dismissLiveToast } = useNotificationFeed(liveNotifications);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -354,6 +362,20 @@ export function Shell({
         <div className="toast" role="status">
           <Check size={16} />
           {toast}
+        </div>
+      )}
+      {liveToast && (
+        <div
+          className={cn("live-toast", `live-toast--${liveToast.severity}`)}
+          role="alert"
+          onClick={dismissLiveToast}
+        >
+          <div className="live-toast__head">
+            <span className="live-toast__type">{liveToast.type.toUpperCase()}</span>
+            <span className="live-toast__time">{liveToast.time.toLocaleTimeString()}</span>
+          </div>
+          <strong>{liveToast.title}</strong>
+          <p>{liveToast.detail}</p>
         </div>
       )}
       {mobileNav && <button className="nav-scrim" onClick={() => setMobileNav(false)} />}
