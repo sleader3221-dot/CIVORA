@@ -28,6 +28,8 @@ export function Workforce() {
   const [language, setLanguage] = useState("Bahasa Melayu");
   const [briefingPlaying, setBriefingPlaying] = useState(false);
   const [shiftOptimized, setShiftOptimized] = useState(false);
+  const [sentToCrew, setSentToCrew] = useState(false);
+  const [lessonAssigned, setLessonAssigned] = useState(false);
 
   const filteredWorkers = useMemo(
     () =>
@@ -136,7 +138,7 @@ export function Workforce() {
             <ProgressBar value={98} tone="lime" />
             <small>111 of 113 workers answered the confirmation correctly.</small>
           </div>
-          <button type="button" className="secondary-button full-button"><MessageSquareText size={15} /> Send to crew devices</button>
+          <button type="button" className="secondary-button full-button" onClick={() => setSentToCrew(true)}><MessageSquareText size={15} /> {sentToCrew ? "Sent to devices" : "Send to crew devices"}</button>
         </Panel>
       </div>
 
@@ -191,7 +193,7 @@ export function Workforce() {
             <span><Users size={14} /> 6 assigned</span>
             <span><CalendarClock size={14} /> Before 11:30</span>
           </div>
-          <button type="button" className="primary-button full-button">Assign lesson <ChevronRight size={15} /></button>
+          <button type="button" className="primary-button full-button" onClick={() => setLessonAssigned(true)}>{lessonAssigned ? <Check size={16} /> : null} {lessonAssigned ? "Lesson assigned" : "Assign lesson"} {!lessonAssigned && <ChevronRight size={15} />}</button>
         </Panel>
       </div>
 

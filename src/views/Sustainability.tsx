@@ -40,6 +40,7 @@ export function Sustainability() {
   const [passportOpen, setPassportOpen] = useState(false);
   const [matched, setMatched] = useState(false);
   const [carbonScope, setCarbonScope] = useState<"embodied" | "operational">("embodied");
+  const [supplierModal, setSupplierModal] = useState(false);
 
   const optimized = scenario === "optimized";
   const reduction = optimized ? 27.8 : 19.4;
@@ -83,11 +84,11 @@ export function Sustainability() {
             <span><i className="forecast" /> Forecast remaining <strong>{optimized ? "806" : "1,120"} t</strong></span>
             <span><i className="budget" /> Budget <strong>3,940 t</strong></span>
           </div>
-          {optimized && (
+          {!optimized && (
             <div className="scenario-saving">
               <Sparkles size={18} />
-              <p><strong>Additional 314 tCO2e avoidable</strong> by switching two concrete batches, consolidating deliveries, and reusing Tower A formwork.</p>
-              <button type="button" onClick={() => setScenario("optimized")}>Apply plan <ArrowRight size={14} /></button>
+              <p><strong>314 tCO2e avoidable</strong> by switching two concrete batches, consolidating deliveries, and reusing Tower A formwork.</p>
+              <button type="button" onClick={() => setScenario("optimized")}>Apply AI plan <ArrowRight size={14} /></button>
             </div>
           )}
         </Panel>
@@ -231,10 +232,40 @@ export function Sustainability() {
             <div><span>Data confidence</span><strong>High</strong></div>
           </div>
           <ProgressBar label="Responsible sourcing score" value={91} tone="lime" />
-          <button type="button" className="text-button">Compare suppliers <ChevronRight size={14} /></button>
+          <button type="button" className="text-button" onClick={() => setSupplierModal(true)}>Compare suppliers <ChevronRight size={14} /></button>
         </Panel>
       </div>
 
+      {supplierModal && (
+        <div className="modal-layer" role="dialog" aria-modal="true">
+          <button className="modal-scrim" onClick={() => setSupplierModal(false)} aria-label="Close" />
+          <div className="action-modal" style={{ padding: 20, maxWidth: 520 }}>
+            <div className="action-modal__head">
+              <div><p className="eyebrow">SUPPLY CHAIN</p><h2>Supplier comparison</h2></div>
+              <button type="button" className="icon-button" onClick={() => setSupplierModal(false)}><X size={18} /></button>
+            </div>
+            <div style={{ marginTop: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, fontSize: 8, color: "var(--text-2)" }}>
+              <div style={{ padding: 10, background: "var(--surface-2)", borderRadius: 7 }}>
+                <strong style={{ color: "var(--text)", display: "block", marginBottom: 5 }}>Shah Alam Concrete</strong>
+                <p>Carbon: <strong style={{ color: "var(--text)" }}>−31%</strong> vs market</p>
+                <p>On-time: <strong style={{ color: "var(--text)" }}>96%</strong></p>
+                <p>Distance: <strong style={{ color: "var(--text)" }}>34 km</strong></p>
+                <p>EPD: <strong style={{ color: "var(--text)" }}>Verified</strong></p>
+              </div>
+              <div style={{ padding: 10, background: "var(--surface-2)", borderRadius: 7 }}>
+                <strong style={{ color: "var(--text)", display: "block", marginBottom: 5 }}>Port Klang Premix</strong>
+                <p>Carbon: <strong style={{ color: "var(--text)" }}>−18%</strong> vs market</p>
+                <p>On-time: <strong style={{ color: "var(--text)" }}>91%</strong></p>
+                <p>Distance: <strong style={{ color: "var(--text)" }}>62 km</strong></p>
+                <p>EPD: <strong style={{ color: "var(--text)" }}>In progress</strong></p>
+              </div>
+            </div>
+            <div className="action-modal__buttons">
+              <button type="button" className="primary-button" onClick={() => setSupplierModal(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
       {passportOpen && (
         <div className="modal-layer" role="dialog" aria-modal="true">
           <button className="modal-scrim" onClick={() => setPassportOpen(false)} aria-label="Close" />

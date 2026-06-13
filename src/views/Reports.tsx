@@ -37,6 +37,7 @@ export function Reports({
   const [generated, setGenerated] = useState(false);
   const [disclosureOpen, setDisclosureOpen] = useState(false);
   const [configOpen, setConfigOpen] = useState(false);
+  const [sectionModal, setSectionModal] = useState<string | null>(null);
 
   const generateReport = () => {
     const content = [
@@ -122,7 +123,7 @@ export function Reports({
           ].map((section) => {
             const Icon = section.icon;
             return (
-              <button type="button" className="report-section-row" key={section.title}>
+              <button type="button" className="report-section-row" key={section.title} onClick={() => setSectionModal(section.title)}>
                 <span><Icon size={18} /></span>
                 <div><strong>{section.title}</strong><small>{section.detail}</small></div>
                 <span className="ready-state"><Check size={14} /> Ready</span>
@@ -227,6 +228,27 @@ export function Reports({
         </div>
       )}
 
+      {sectionModal && (
+        <div className="modal-layer" role="dialog" aria-modal="true">
+          <button className="modal-scrim" onClick={() => setSectionModal(null)} aria-label="Close" />
+          <div className="action-modal" style={{ padding: 20, maxWidth: 500 }}>
+            <div className="action-modal__head">
+              <div><p className="eyebrow">REPORT SECTION</p><h2>{sectionModal}</h2></div>
+              <button type="button" className="icon-button" onClick={() => setSectionModal(null)}><X size={18} /></button>
+            </div>
+            <div style={{ marginTop: 12, fontSize: 8, lineHeight: 1.7, color: "var(--text-2)" }}>
+              <p><strong style={{ color: "var(--text)" }}>Section:</strong> {sectionModal}</p>
+              <p><strong style={{ color: "var(--text)" }}>Status:</strong> Ready to include in report.</p>
+              <p><strong style={{ color: "var(--text)" }}>Data sources:</strong> Live telemetry, verified edge records, and daily operator logs.</p>
+              <p><strong style={{ color: "var(--text)" }}>Last updated:</strong> {new Date().toLocaleTimeString()}</p>
+              <p style={{ marginTop: 10, color: "var(--text-3)" }}>This section will be included in the exported report. Edit narrative before export using the report builder.</p>
+            </div>
+            <div className="action-modal__buttons">
+              <button type="button" className="primary-button" onClick={() => setSectionModal(null)}><Check size={15} /> Close</button>
+            </div>
+          </div>
+        </div>
+      )}
       {configOpen && (
         <div className="modal-layer" role="dialog" aria-modal="true">
           <button className="modal-scrim" onClick={() => setConfigOpen(false)} aria-label="Close" />
