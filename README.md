@@ -15,7 +15,7 @@
 [![Tests](https://img.shields.io/badge/Tests-7_Passing-C9FF5C?logo=vitest&logoColor=111111)](#-quality-and-testing)
 [![Security](https://img.shields.io/badge/npm_audit-0_Vulnerabilities-C9FF5C?logo=npm&logoColor=111111)](#-quality-and-testing)
 
-🏗️ Built for **ImagineHack 2026: A Sustainable Tomorrow**
+🏗️ **Construction intelligence for safer, more productive, and more sustainable projects**
 
 </div>
 
@@ -54,9 +54,9 @@ It combines:
 
 Civora does more than display information. It prioritizes risks, explains contributing factors, recommends practical controls, routes accountable actions, and records what changed.
 
-## 🎯 Core Demo Story
+## 🎯 Example Operational Workflow
 
-At 10:22 AM, six workers are approaching an unsafe heat-exposure threshold in the MEP Corridor.
+At 10:22 AM, six workers are approaching an unsafe heat-exposure threshold in an MEP corridor.
 
 Civora:
 
@@ -68,7 +68,7 @@ Civora:
 6. Preserves an auditable record of the decision.
 7. Connects the intervention to safety, productivity, and financial impact.
 
-That single workflow demonstrates Civora's central principle:
+This workflow demonstrates Civora's central principle:
 
 > **Safety, productivity, and sustainability should reinforce one another, not compete.**
 
@@ -200,7 +200,7 @@ flowchart LR
     K --> L["Action, Audit & Impact"]
 ```
 
-### Current Hackathon Prototype
+### Current Reference Implementation
 
 The current application uses:
 
@@ -298,9 +298,9 @@ Current verified status:
 | Route-level code splitting | ✅ Enabled |
 | Offline PWA generation | ✅ Enabled |
 
-## 🎬 Recommended Judge Demo
+## 🎬 Product Walkthrough
 
-Use this focused path for a clear 5–7 minute presentation:
+Use this path to explore the platform's connected workflows:
 
 1. **Command Center:** introduce the heat-risk scenario.
 2. **Dispatch Response:** approve the recommended intervention.
@@ -312,18 +312,16 @@ Use this focused path for a clear 5–7 minute presentation:
 8. **Impact Reports:** export a transparent evidence report.
 9. **Civora Copilot:** ask, `Find carbon savings`.
 
-The full timed narrative is available in [docs/PITCH.md](docs/PITCH.md).
+## 📈 Platform Value
 
-## 🏆 ImagineHack Judging Alignment
-
-| Criterion | Civora Evidence |
+| Outcome | How Civora Contributes |
 |---|---|
-| **Technical — 30%** | Typed domain model, digital twin, live telemetry, predictive workflows, PWA, persistence, code splitting, and tests |
-| **Content — 20%** | High-value construction problem, credible buyers, measurable outcomes, and transparent assumptions |
-| **Pitch — 20%** | One memorable human story from prediction through verified impact |
-| **Design — 15%** | Responsive command-center UX, clear feedback, strong hierarchy, and accessible states |
-| **Track Relevance — 10%** | Construction digitalization, safety, productivity, connected tools, and circularity |
-| **Growth — 5%** | Edge AI, carbon accounting, multilingual UX, material passports, and spatial intelligence |
+| **Safer work** | Identifies emerging conditions, explains risk factors, and routes accountable interventions |
+| **Higher productivity** | Connects workforce, schedule, zone, and asset signals to reduce avoidable disruption |
+| **Lower environmental impact** | Makes carbon, energy, water, waste, and material circularity visible during operations |
+| **Better asset performance** | Detects tool-health anomalies and supports preventive maintenance and charging decisions |
+| **More inclusive communication** | Delivers multilingual briefings and tracks workforce comprehension |
+| **Trusted reporting** | Preserves source context, methodology, confidence, approvals, and evidence lineage |
 
 ## 💼 Business Potential
 
@@ -373,13 +371,13 @@ Civora is **decision support**, not an autonomous safety authority.
 - Access control, retention limits, worker consultation, and audit logs are production requirements.
 - Carbon and financial values require verified source data before external assurance.
 
-> **Prototype disclosure:** Current telemetry, AI outputs, project values, and impact metrics are deterministic demonstration data. The prototype does not claim live production integrations, certified safety compliance, or assured carbon accounting.
+> **Reference implementation disclosure:** Current telemetry, AI outputs, project values, and impact metrics are deterministic demonstration data. This implementation does not claim live production integrations, certified safety compliance, or assured carbon accounting.
 
 ## 📁 Project Structure
 
 ```text
 CIVORA/
-├── docs/                    # Research, architecture, submission, and pitch
+├── docs/                    # Research, architecture, features, and product materials
 ├── public/                  # PWA icons, redirects, and security headers
 ├── src/
 │   ├── components/         # Shared interface primitives and application shell
@@ -396,10 +394,7 @@ CIVORA/
 
 ## 📚 Project Documentation
 
-- 🔬 [Research and winning strategy](docs/RESEARCH.md)
 - 🏗️ [System architecture](docs/ARCHITECTURE.md)
-- 📝 [Devpost submission draft](docs/SUBMISSION.md)
-- 🎤 [Six-minute pitch and demo script](docs/PITCH.md)
 - ✨ [Feature matrix](docs/FEATURE_MATRIX.md)
 
 ## 🗺️ Roadmap
@@ -409,7 +404,6 @@ CIVORA/
 - [x] Persistent operational workflows
 - [x] Installable offline PWA
 - [x] Automated tests and production build
-- [ ] Validate the exact official ImagineHack track statement
 - [ ] Conduct construction professional interviews
 - [ ] Connect environmental and tool telemetry
 - [ ] Add BIM and geospatial adapters
@@ -425,10 +419,6 @@ CIVORA/
 - [CIDB National Construction Policy 2030](https://www.cidb.gov.my/eng/national-construction-policy-ncp-2030/)
 - [Hilti: Helping customers succeed with software](https://reports.hilti.group/2024/our-stories/helping-customers-succeed-with-software)
 
-## ⏰ Hackathon Deadline
-
-ImagineHack 2026 submissions are due **June 21, 2026 at 6:30 AM GMT+5:30**, based on the supplied event brief. The team should verify the official organizer schedule and track statement before final submission.
-
 ---
 
 <div align="center">
@@ -437,6 +427,6 @@ ImagineHack 2026 submissions are due **June 21, 2026 at 6:30 AM GMT+5:30**, base
 
 **Civora helps construction teams see sooner, decide better, and prove what changed.**
 
-[Explore the Architecture](docs/ARCHITECTURE.md) · [Read the Pitch](docs/PITCH.md) · [Review the Submission](docs/SUBMISSION.md)
+[Explore the Architecture](docs/ARCHITECTURE.md) · [Review the Feature Matrix](docs/FEATURE_MATRIX.md)
 
 </div>
