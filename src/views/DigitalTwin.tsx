@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  ArrowRight,
   Box,
   Camera,
   ChevronRight,
@@ -7,6 +8,7 @@ import {
   Eye,
   Gauge,
   Layers3,
+  MapPin,
   Maximize2,
   Radio,
   ThermometerSun,
@@ -15,18 +17,22 @@ import {
   Wind,
   X
 } from "lucide-react";
-import { useState } from "react";
-import type { Zone } from "../types";
+import { useMemo, useState } from "react";
+import { floorPlans, zones } from "../data/demo";
+import type { EquipmentPosition, FloorPlan, WorkerPosition, Zone } from "../types";
 import { cn } from "../lib/utils";
 import { Panel, ProgressBar, RiskBadge, SectionHeader, StatusDot } from "../components/Primitives";
 
 type TwinLayer = "risk" | "workers" | "environment" | "assets";
 
-export function DigitalTwin({ zones }: { zones: Zone[] }) {
+export function DigitalTwin({ zones: liveZones }: { zones: Zone[] }) {
   const [activeLayer, setActiveLayer] = useState<TwinLayer>("risk");
-  const [selectedZone, setSelectedZone] = useState<Zone>(zones[4]);
+  const [selectedZone, setSelectedZone] = useState<Zone>(liveZones[4]);
   const [cameraMode, setCameraMode] = useState(false);
   const [timeIndex, setTimeIndex] = useState(8);
+  const [activeFloor, setActiveFloor] = useState(0);
+  const [selectedWorker, setSelectedWorker] = useState<WorkerPosition | null>(null);
+  const [selectedEquip, setSelectedEquip] = useState<EquipmentPosition | null>(null);
 
   const layers: Array<{ id: TwinLayer; label: string; icon: typeof Box }> = [
     { id: "risk", label: "Risk", icon: AlertTriangle },
@@ -34,6 +40,21 @@ export function DigitalTwin({ zones }: { zones: Zone[] }) {
     { id: "environment", label: "Environment", icon: Wind },
     { id: "assets", label: "Assets", icon: Box }
   ];
+
+  const floor = floorPlans[activeFloor];
+
+  const roomsByRisk = useMemo(() => {
+    const c = { critical: 0, high: 0, medium: 0, low: 0 };
+    floor.rooms.forEach((r) => { c[r.risk]++; });
+    return c;
+  }, [floor]);
+
+  const tempColor = (temp: number) => {
+    if (temp >= 36) return "temp-critical";
+    if (temp >= 33) return "temp-high";
+    if (temp >= 30) return "temp-medium";
+    return "temp-low";
+  };
 
   return (
     <div className="workspace twin-workspace">
@@ -84,60 +105,127 @@ export function DigitalTwin({ zones }: { zones: Zone[] }) {
           <div className={cn("digital-twin", `digital-twin--${activeLayer}`)}>
             <div className="digital-twin__grid" />
             <div className="north-arrow">N <span /></div>
-            {zones.map((zone) => {
-              const isSelected = selectedZone.id === zone.id;
-              const layerValue =
-                activeLayer === "workers"
-                  ? `${zone.workers}`
-                  : activeLayer === "environment"
-                    ? `${zone.temperature}°`
-                    : activeLayer === "assets"
-                      ? `${Math.max(2, Math.round(zone.workers / 6))} tools`
-                      : zone.risk;
-              return (
+
+            {/* Building outline */}
+            <div className="twin-building">
+              <div className="twin-building__label">{floor.name} — {floor.rooms.length} zones</div>
+
+              {/* Room rectangles */}
+              {floor.rooms.map((room) => {
+                const layerClass = activeLayer === "risk" ? `risk-room--${room.risk}` :
+                  activeLayer === "environment" ? tempColor(room.temperature) :
+                  activeLayer === "workers" ? (room.occupants > 5 ? "worker-dense" : "worker-sparse") :
+                  "asset-room";
+                return (
+                  <div
+                    key={room.id}
+                    className={cn("twin-room", layerClass, `twin-room--${room.type}`)}
+                    style={{ left: `${room.x}%`, top: `${room.y}%`, width: `${room.width}%`, height: `${room.height}%` }}
+                    title={`${room.name} — ${room.occupants} occupants — ${room.temperature}°C`}
+                  >
+                    <span className="twin-room__label">{room.type === "workspace" || room.type === "corridor" ? room.name : ""}</span>
+                    {activeLayer === "environment" && <span className="twin-room__temp">{room.temperature}°</span>}
+                    {activeLayer === "workers" && room.occupants > 0 && <span className="twin-room__occ">{room.occupants}</span>}
+                  </div>
+                );
+              })}
+
+              {/* Worker dots */}
+              {activeLayer === "workers" && floor.workers.map((worker) => (
+                <button
+                  key={worker.id}
+                  type="button"
+                  className={cn("twin-worker", selectedWorker?.id === worker.id && "is-selected")}
+                  style={{ left: `${worker.x}%`, top: `${worker.y}%` }}
+                  onClick={(e) => { e.stopPropagation(); setSelectedWorker(worker); setSelectedEquip(null); }}
+                  title={`${worker.name} — ${worker.role}`}
+                >
+                  <span className="twin-worker__dot" />
+                  <span className="twin-worker__name">{worker.name}</span>
+                  <span className={cn("twin-worker__status", `worker-${worker.status}`)} />
+                </button>
+              ))}
+
+              {/* Equipment markers */}
+              {activeLayer === "assets" && floor.equipment.map((eq) => (
+                <button
+                  key={eq.id}
+                  type="button"
+                  className={cn("twin-equip", selectedEquip?.id === eq.id && "is-selected", `equip-${eq.status}`)}
+                  style={{ left: `${eq.x}%`, top: `${eq.y}%` }}
+                  onClick={(e) => { e.stopPropagation(); setSelectedEquip(eq); setSelectedWorker(null); }}
+                  title={`${eq.name} — ${eq.type}`}
+                >
+                  <span className="twin-equip__icon">{eq.icon}</span>
+                  <span className="twin-equip__name">{eq.name}</span>
+                </button>
+              ))}
+
+              {/* Structural grid */}
+              {Array.from({ length: 24 }).map((_, i) => (
+                <div key={`col-${i}`} className="structural-column" style={{
+                  left: `${8 + (i % 6) * 16}%`,
+                  top: `${6 + Math.floor(i / 6) * 26}%`,
+                  width: "3%", height: "3%"
+                }} />
+              ))}
+
+              {/* Zone boundaries from original data */}
+              {liveZones.map((zone) => (
                 <button
                   type="button"
                   key={zone.id}
-                  className={cn(
-                    "twin-zone",
-                    `twin-zone--${zone.risk}`,
-                    isSelected && "is-selected"
-                  )}
-                  style={{
-                    left: `${zone.x}%`,
-                    top: `${zone.y}%`,
-                    width: `${zone.width}%`,
-                    height: `${zone.height}%`,
-                    "--height": `${25 + zone.workers}px`
-                  } as React.CSSProperties}
+                  className={cn("twin-zone-overlay", `twin-zone-overlay--${zone.risk}`, selectedZone.id === zone.id && "is-active")}
+                  style={{ left: `${zone.x}%`, top: `${zone.y}%`, width: `${zone.width}%`, height: `${zone.height}%` }}
                   onClick={() => setSelectedZone(zone)}
+                  title={`${zone.name}: ${zone.risk} risk`}
                 >
-                  <span className="twin-zone__roof" />
-                  <span className="twin-zone__side" />
-                  <span className="twin-zone__label">
-                    <strong>{zone.name}</strong>
-                    <small>{layerValue}</small>
-                  </span>
-                  {zone.risk === "critical" && <span className="risk-radar" />}
+                  <span>{zone.name}</span>
                 </button>
-              );
-            })}
-            <div className="sensor-cluster sensor-cluster--one">
-              <span /><span /><span /><small>12</small>
-            </div>
-            <div className="sensor-cluster sensor-cluster--two">
-              <span /><span /><span /><small>8</small>
+              ))}
+
+              {/* Sensor clusters */}
+              <div className="sensor-cluster sensor-cluster--one">
+                <span /><span /><span /><small>12</small>
+              </div>
+              <div className="sensor-cluster sensor-cluster--two">
+                <span /><span /><span /><small>8</small>
+              </div>
             </div>
           </div>
 
+          {/* Floor selector */}
+          <div className="floor-tabs">
+            {floorPlans.map((f, index) => (
+              <button
+                key={f.id}
+                type="button"
+                className={cn("floor-tab", activeFloor === index && "is-active")}
+                onClick={() => { setActiveFloor(index); setSelectedWorker(null); setSelectedEquip(null); }}
+              >
+                <span className="floor-tab__level">L.{f.level}</span>
+                <span className="floor-tab__name">{f.name}</span>
+                <RiskBadge level={f.risk} />
+              </button>
+            ))}
+          </div>
+
+          {/* Floor legend */}
+          <div className="floor-legend">
+            <span><StatusDot tone="green" /> Low risk</span>
+            <span><StatusDot tone="amber" /> Medium risk</span>
+            <span><StatusDot tone="red" /> High risk</span>
+            <span className="floor-legend__divider" />
+            <span><i className="floor-legend__dot" /> Workers</span>
+            <span><i className="floor-legend__equip" /> Equipment</span>
+          </div>
+
+          {/* Timeline */}
           <div className="timeline-control">
             <button type="button" className="timeline-live">LIVE</button>
             <span>06:00</span>
             <input
-              type="range"
-              min="0"
-              max="12"
-              value={timeIndex}
+              type="range" min="0" max="12" value={timeIndex}
               onChange={(event) => setTimeIndex(Number(event.target.value))}
               aria-label="Twin timeline"
             />
@@ -183,6 +271,55 @@ export function DigitalTwin({ zones }: { zones: Zone[] }) {
             </div>
           </div>
 
+          {/* Floor & room info */}
+          <div className="zone-floor-info">
+            <p className="eyebrow">CURRENT FLOOR</p>
+            <div className="zone-floor-stats">
+              <span>{floor.name}</span>
+              <span><strong>{floor.workers.length}</strong> workers</span>
+              <span><strong>{floor.equipment.length}</strong> equipment</span>
+              <span><strong>{roomsByRisk.critical + roomsByRisk.high}</strong> risk zones</span>
+            </div>
+          </div>
+
+          {/* Selected worker detail */}
+          {selectedWorker && (
+            <div className="twin-detail-card">
+              <div className="twin-detail-card__head">
+                <span className="twin-detail-card__avatar">{selectedWorker.avatar}</span>
+                <div>
+                  <strong>{selectedWorker.name}</strong>
+                  <small>{selectedWorker.role}</small>
+                </div>
+                <span className={cn("twin-detail-card__status", `detail-${selectedWorker.status}`)}>
+                  {selectedWorker.status}
+                </span>
+              </div>
+              <button type="button" className="text-button" onClick={() => setSelectedWorker(null)}>
+                <X size={14} /> Dismiss
+              </button>
+            </div>
+          )}
+
+          {/* Selected equipment detail */}
+          {selectedEquip && (
+            <div className="twin-detail-card">
+              <div className="twin-detail-card__head">
+                <span className="twin-detail-card__icon">{selectedEquip.icon}</span>
+                <div>
+                  <strong>{selectedEquip.name}</strong>
+                  <small>{selectedEquip.type}</small>
+                </div>
+                <span className={cn("twin-detail-card__status", `detail-${selectedEquip.status}`)}>
+                  {selectedEquip.status}
+                </span>
+              </div>
+              <button type="button" className="text-button" onClick={() => setSelectedEquip(null)}>
+                <X size={14} /> Dismiss
+              </button>
+            </div>
+          )}
+
           <div className="zone-risk-forecast">
             <div className="zone-risk-forecast__head">
               <span><Gauge size={15} /> Risk forecast</span>
@@ -216,22 +353,19 @@ export function DigitalTwin({ zones }: { zones: Zone[] }) {
       </div>
 
       <div className="twin-insights">
-        <button type="button" className="panel" style={{ cursor: "pointer", textAlign: "left", border: "var(--border)", display: "grid", gridTemplateColumns: "35px 1fr 16px", alignItems: "center", gap: 10, padding: 12 }}
-          onClick={() => setTimeIndex(10)}>
+        <button type="button" className="panel insight-card" onClick={() => { setActiveFloor(0); setActiveLayer("risk"); }}>
           <span className="insight-icon insight-icon--red"><AlertTriangle size={18} /></span>
-          <div><small>PREDICTED CONFLICT</small><strong>Crane path × delivery route</strong><p>11:35 • Loading Bay • 81% confidence</p></div>
+          <div><small>GROUND FLOOR</small><strong>Heat stress in Loading Bay</strong><p>35°C • 6 workers exposed • Immediate action advised</p></div>
           <ChevronRight size={17} />
         </button>
-        <button type="button" className="panel" style={{ cursor: "pointer", textAlign: "left", border: "var(--border)", display: "grid", gridTemplateColumns: "35px 1fr 16px", alignItems: "center", gap: 10, padding: 12 }}
-          onClick={() => setSelectedZone(zones.find((z) => z.name === "Tower A") ?? zones[0])}>
-          <span className="insight-icon insight-icon--cyan"><Droplets size={18} /></span>
-          <div><small>RESOURCE SIGNAL</small><strong>Water use 14% above model</strong><p>Tower A • probable valve leak</p></div>
+        <button type="button" className="panel insight-card" onClick={() => { setActiveFloor(2); setActiveLayer("workers"); }}>
+          <span className="insight-icon insight-icon--cyan"><Users size={18} /></span>
+          <div><small>LEVEL 12</small><strong>Finishing crew at target</strong><p>4 workers on schedule • QA inspection in progress</p></div>
           <ChevronRight size={17} />
         </button>
-        <button type="button" className="panel" style={{ cursor: "pointer", textAlign: "left", border: "var(--border)", display: "grid", gridTemplateColumns: "35px 1fr 16px", alignItems: "center", gap: 10, padding: 12 }}
-          onClick={() => setSelectedZone(zones.find((z) => z.name === "Tower B") ?? zones[0])}>
-          <span className="insight-icon insight-icon--lime"><Users size={18} /></span>
-          <div><small>FLOW OPTIMIZATION</small><strong>Move Crew 3 to Tower B</strong><p>Recover 22 worker-minutes this hour</p></div>
+        <button type="button" className="panel insight-card" onClick={() => { setActiveFloor(0); setActiveLayer("assets"); }}>
+          <span className="insight-icon insight-icon--lime"><Box size={18} /></span>
+          <div><small>GROUND FLOOR</small><strong>Crane T-01 operational</strong><p>76% fuel • 1,420 hrs • Next service in 48 hrs</p></div>
           <ChevronRight size={17} />
         </button>
       </div>
@@ -254,10 +388,10 @@ export function DigitalTwin({ zones }: { zones: Zone[] }) {
               <span className="camera-person camera-person--one"><i /> Worker • PPE 98%</span>
               <span className="camera-person camera-person--two"><i /> Worker • PPE 96%</span>
               <span className="camera-hazard"><i /> Heat zone • 35.2°C</span>
-              <div className="camera-feed__stamp"><StatusDot tone="red" pulse /> LIVE • 10:24:18</div>
+              <div className="camera-feed__stamp"><StatusDot tone="red" pulse /> LIVE • {new Date().toLocaleTimeString()}</div>
             </div>
             <div className="camera-modal__footer">
-              <span><ShieldCheckIcon /> Privacy-preserving edge inference</span>
+              <span><Eye size={15} /> Privacy-preserving edge inference</span>
               <p>Faces are never stored. Only safety events and anonymized coordinates leave the camera.</p>
             </div>
           </div>
@@ -265,8 +399,4 @@ export function DigitalTwin({ zones }: { zones: Zone[] }) {
       )}
     </div>
   );
-}
-
-function ShieldCheckIcon() {
-  return <Eye size={15} />;
 }

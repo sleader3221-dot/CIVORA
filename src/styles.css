@@ -384,6 +384,101 @@ button:disabled { cursor: not-allowed; opacity: .48; }
 .sensor-cluster span { position: absolute; width: 7px; height: 7px; background: var(--cyan); border: 2px solid #0a0f13; border-radius: 50%; }
 .sensor-cluster span:nth-child(2) { left: 7px; top: 5px; }.sensor-cluster span:nth-child(3) { left: -5px; top: 8px; }
 .sensor-cluster small { position: absolute; left: 14px; top: -10px; padding: 2px 4px; color: #080b0f; background: var(--cyan); border-radius: 5px; font-size: 6px; font-weight: 800; }
+
+/* Enhanced Digital Twin - Building Floor Plan */
+.twin-building { position: relative; width: 100%; height: 100%; min-height: 500px; padding: 10px; }
+.twin-building__label { position: absolute; top: 10px; left: 12px; z-index: 5; color: var(--text-3); font: 500 7px "DM Mono", monospace; letter-spacing: .08em; }
+.twin-room { position: absolute; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 2px; border-radius: 2px; transition: all .3s ease; overflow: hidden; }
+.twin-room:hover { z-index: 6; filter: brightness(1.15); transform: scale(1.02); }
+.twin-room--workspace { background: rgba(60,72,88,.45); border: 1px solid rgba(90,105,125,.4); }
+.twin-room--corridor { background: rgba(50,60,75,.25); border: 1px solid rgba(90,105,125,.2); }
+.twin-room--core { background: rgba(40,48,58,.7); border: 1px solid rgba(70,82,98,.5); }
+.twin-room--mep { background: rgba(128,91,44,.2); border: 1px solid rgba(255,184,77,.3); }
+.twin-room--stair { background: rgba(80,70,60,.3); border: 1px solid rgba(110,100,90,.3); }
+.twin-room--elevator { background: rgba(60,80,100,.3); border: 1px solid rgba(80,120,160,.3); }
+.twin-room--storage { background: rgba(70,65,55,.25); border: 1px solid rgba(100,95,80,.25); }
+.twin-room--restroom { background: rgba(50,70,80,.2); border: 1px solid rgba(70,90,110,.2); }
+.twin-room__label { position: absolute; bottom: 3px; left: 5px; max-width: calc(100% - 10px); overflow: hidden; color: var(--text-2); font-size: 6px; text-overflow: ellipsis; white-space: nowrap; opacity: .8; }
+.twin-room__temp { position: absolute; top: 2px; right: 4px; color: var(--amber); font: 600 7px "DM Mono", monospace; }
+.twin-room__occ { position: absolute; top: 2px; right: 4px; display: grid; place-items: center; width: 14px; height: 14px; color: #080b0f; background: var(--lime); border-radius: 50%; font-size: 6px; font-weight: 800; }
+.risk-room--critical { background: rgba(255,98,109,.35) !important; border-color: var(--red) !important; }
+.risk-room--high { background: rgba(255,129,98,.25) !important; border-color: #ff8162 !important; }
+.risk-room--medium { background: rgba(255,184,77,.18) !important; border-color: var(--amber) !important; }
+.risk-room--low { background: rgba(201,255,92,.08) !important; border-color: rgba(201,255,92,.25) !important; }
+.temp-critical { background: rgba(255,98,109,.3) !important; border-color: var(--red) !important; }
+.temp-high { background: rgba(255,129,98,.2) !important; border-color: #ff8162 !important; }
+.temp-medium { background: rgba(255,184,77,.15) !important; border-color: var(--amber) !important; }
+.temp-low { background: rgba(80,216,232,.1) !important; border-color: rgba(80,216,232,.2) !important; }
+.worker-dense { background: rgba(201,255,92,.2) !important; border-color: var(--lime) !important; }
+.worker-sparse { background: rgba(201,255,92,.06) !important; border-color: rgba(201,255,92,.15) !important; }
+.asset-room { background: rgba(167,139,250,.08) !important; border-color: rgba(167,139,250,.2) !important; }
+
+/* Worker dots on floor plan */
+.twin-worker { position: absolute; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 0; background: transparent; border: 0; cursor: pointer; transform: translate(-50%, -50%); }
+.twin-worker__dot { width: 8px; height: 8px; background: var(--lime); border: 2px solid #0a0f13; border-radius: 50%; box-shadow: 0 0 8px rgba(201,255,92,.4); animation: workerPulse 2s infinite; }
+@keyframes workerPulse { 50% { box-shadow: 0 0 14px rgba(201,255,92,.6); } }
+.twin-worker.is-selected .twin-worker__dot { width: 12px; height: 12px; border-color: var(--lime); box-shadow: 0 0 20px rgba(201,255,92,.8); }
+.twin-worker__name { padding: 1px 4px; color: #080b0f; background: var(--lime); border-radius: 3px; font-size: 6px; font-weight: 700; white-space: nowrap; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.twin-worker:hover .twin-worker__name, .twin-worker.is-selected .twin-worker__name { opacity: 1; }
+.twin-worker__status { position: absolute; top: -4px; right: -4px; width: 5px; height: 5px; border-radius: 50%; border: 1px solid #0a0f13; }
+.worker-active { background: var(--lime); }.worker-resting { background: var(--amber); }.worker-away { background: var(--text-3); }
+
+/* Equipment markers */
+.twin-equip { position: absolute; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 2px 4px; background: rgba(30,40,55,.7); border: 1px solid rgba(90,105,130,.4); border-radius: 4px; cursor: pointer; transform: translate(-50%, -50%); transition: all .2s; }
+.twin-equip:hover, .twin-equip.is-selected { border-color: var(--cyan); background: rgba(30,40,55,.9); z-index: 7; }
+.twin-equip__icon { font-size: 14px; line-height: 1; }
+.twin-equip__name { color: var(--text-2); font-size: 5px; white-space: nowrap; }
+.equip-operational { border-color: rgba(80,216,232,.5); }
+.equip-idle { border-color: rgba(255,184,77,.4); opacity: .7; }
+.equip-maintenance { border-color: rgba(255,98,109,.5); }
+
+/* Structural columns */
+.structural-column { position: absolute; z-index: 1; background: rgba(80,95,115,.35); border: 1px solid rgba(100,115,135,.2); border-radius: 1px; pointer-events: none; }
+
+/* Zone overlay from original data */
+.twin-zone-overlay { position: absolute; z-index: 3; display: flex; align-items: flex-end; justify-content: flex-start; padding: 3px; border: 1px dashed rgba(255,255,255,.15); border-radius: 2px; cursor: pointer; background: transparent; font-size: 6px; color: var(--text-3); transition: all .2s; pointer-events: all; }
+.twin-zone-overlay:hover, .twin-zone-overlay.is-active { border-style: solid; border-color: var(--lime); background: rgba(201,255,92,.06); z-index: 8; }
+.twin-zone-overlay--critical { border-color: rgba(255,98,109,.5) !important; }
+.twin-zone-overlay--high { border-color: rgba(255,129,98,.4) !important; }
+.twin-zone-overlay--medium { border-color: rgba(255,184,77,.3) !important; }
+.twin-zone-overlay--low { border-color: rgba(201,255,92,.2) !important; }
+
+/* Floor selector tabs */
+.floor-tabs { display: flex; gap: 4px; padding: 8px 13px; border-top: 1px solid var(--border); overflow-x: auto; }
+.floor-tab { display: flex; align-items: center; gap: 6px; padding: 6px 9px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 7px; white-space: nowrap; transition: all .2s; }
+.floor-tab:hover { border-color: var(--border-strong); }
+.floor-tab.is-active { background: color-mix(in srgb, var(--lime) 8%, transparent); border-color: var(--lime); }
+.floor-tab__level { color: var(--text-3); font: 500 7px "DM Mono", monospace; }
+.floor-tab__name { color: var(--text); font-weight: 650; }
+
+/* Floor legend */
+.floor-legend { display: flex; align-items: center; gap: 10px; padding: 6px 13px; border-top: 1px solid var(--border); font-size: 6px; color: var(--text-3); overflow-x: auto; }
+.floor-legend__divider { width: 1px; height: 12px; background: var(--border); }
+.floor-legend__dot { display: inline-block; width: 6px; height: 6px; background: var(--lime); border-radius: 50%; vertical-align: middle; }
+.floor-legend__equip { display: inline-block; width: 6px; height: 6px; background: var(--cyan); border-radius: 2px; vertical-align: middle; }
+
+/* Floor detail in inspector */
+.zone-floor-info { margin-top: 12px; padding: 10px; background: var(--surface-2); border-radius: 7px; }
+.zone-floor-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 3px; }
+.zone-floor-stats span { color: var(--text-2); font-size: 7px; }
+.zone-floor-stats strong { color: var(--text); }
+
+/* Worker/equipment detail cards */
+.twin-detail-card { margin-top: 12px; padding: 10px; background: color-mix(in srgb, var(--lime) 6%, var(--surface-2)); border: 1px solid color-mix(in srgb, var(--lime) 16%, transparent); border-radius: 7px; }
+.twin-detail-card__head { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 7px; }
+.twin-detail-card__avatar { display: grid; place-items: center; width: 28px; height: 28px; color: #080b0f; background: #d3ba91; border-radius: 50%; font-size: 8px; font-weight: 800; }
+.twin-detail-card__icon { display: grid; place-items: center; width: 28px; height: 28px; font-size: 16px; background: rgba(30,40,55,.5); border-radius: 6px; }
+.twin-detail-card__head div { display: flex; flex-direction: column; }
+.twin-detail-card__head strong { font-size: 9px; }
+.twin-detail-card__head small { margin-top: 2px; color: var(--text-3); font-size: 7px; }
+.twin-detail-card__status { padding: 2px 5px; border-radius: 3px; font-size: 6px; font-weight: 700; text-transform: uppercase; }
+.detail-active, .detail-operational { color: var(--lime); background: color-mix(in srgb, var(--lime) 10%, transparent); }
+.detail-resting, .detail-idle { color: var(--amber); background: color-mix(in srgb, var(--amber) 10%, transparent); }
+.detail-away, .detail-maintenance { color: var(--red); background: color-mix(in srgb, var(--red) 10%, transparent); }
+.twin-detail-card .text-button { margin-top: 7px; font-size: 7px; }
+.insight-card { cursor: pointer; text-align: left; border: var(--border); display: grid; grid-template-columns: 35px 1fr 16px; align-items: center; gap: 10px; padding: 12px; }
+.insight-card:hover { border-color: var(--border-strong); }
+
 .timeline-control { display: grid; grid-template-columns: auto auto 1fr auto auto; align-items: center; gap: 10px; height: 52px; padding: 0 13px; border-top: 1px solid var(--border); }
 .timeline-control span { color: var(--text-3); font: 500 7px "DM Mono", monospace; }
 .timeline-live { padding: 3px 5px; color: var(--red); background: color-mix(in srgb, var(--red) 8%, transparent); border: 1px solid color-mix(in srgb, var(--red) 24%, transparent); border-radius: 4px; font: 600 7px "DM Mono", monospace; }

@@ -3,6 +3,7 @@ import type {
   Alert,
   CarbonPoint,
   CostData,
+  FloorPlan,
   Material,
   MetricPoint,
   PhotoDocument,
@@ -433,6 +434,135 @@ export const equipmentTelemetryInit = [
   { id: "eq-3", name: "Concrete pump CP-2", type: "Truck-mounted", status: "online" as const, battery: 100, fuelLevel: 44, operatingHours: 214, location: { zone: "Tower B", level: "Ground" }, lastCommunication: new Date() },
   { id: "eq-4", name: "Generator G-07", type: "Diesel 150kVA", status: "maintenance" as const, battery: 100, fuelLevel: 18, operatingHours: 3200, location: { zone: "Material Yard", level: "Ground" }, lastCommunication: new Date() },
   { id: "eq-5", name: "Hoist H-02", type: "Personnel/material", status: "online" as const, battery: 100, fuelLevel: 88, operatingHours: 654, location: { zone: "Tower A", level: "Shaft B" }, lastCommunication: new Date() }
+];
+
+export const floorPlans: FloorPlan[] = [
+  {
+    id: "fl-gf",
+    name: "Ground Floor",
+    level: 0,
+    width: 100, height: 100,
+    temperature: 33,
+    risk: "medium",
+    rooms: [
+      { id: "rm-ent", name: "Main Entrance", x: 8, y: 2, width: 18, height: 10, type: "workspace", occupants: 4, temperature: 32, risk: "low" },
+      { id: "rm-lobby", name: "Lobby", x: 8, y: 14, width: 18, height: 16, type: "workspace", occupants: 6, temperature: 31, risk: "low" },
+      { id: "rm-cores", name: "Core A", x: 30, y: 2, width: 10, height: 28, type: "core", occupants: 0, temperature: 33, risk: "low" },
+      { id: "rm-off1", name: "Site Office", x: 44, y: 2, width: 20, height: 12, type: "workspace", occupants: 8, temperature: 29, risk: "low" },
+      { id: "rm-off2", name: "Meeting Room", x: 44, y: 16, width: 20, height: 14, type: "workspace", occupants: 3, temperature: 28, risk: "low" },
+      { id: "rm-cor1", name: "Main Corridor", x: 68, y: 2, width: 24, height: 8, type: "corridor", occupants: 2, temperature: 32, risk: "low" },
+      { id: "rm-mep", name: "MEP Room", x: 68, y: 12, width: 10, height: 16, type: "mep", occupants: 1, temperature: 36, risk: "medium" },
+      { id: "rm-stor", name: "Material Store", x: 80, y: 12, width: 12, height: 16, type: "storage", occupants: 0, temperature: 33, risk: "low" },
+      { id: "rm-rest", name: "Rest Area", x: 44, y: 32, width: 18, height: 10, type: "workspace", occupants: 5, temperature: 30, risk: "low" },
+      { id: "rm-stair-a", name: "Stair A", x: 64, y: 32, width: 6, height: 10, type: "stair", occupants: 0, temperature: 31, risk: "low" },
+      { id: "rm-elev", name: "Elevator Bank", x: 72, y: 32, width: 8, height: 10, type: "elevator", occupants: 0, temperature: 30, risk: "low" },
+      { id: "rm-cor-w", name: "West Wing", x: 8, y: 32, width: 20, height: 12, type: "corridor", occupants: 3, temperature: 34, risk: "low" },
+      { id: "rm-wc", name: "Washrooms", x: 8, y: 46, width: 10, height: 8, type: "restroom", occupants: 0, temperature: 29, risk: "low" },
+      { id: "rm-load", name: "Loading Dock", x: 30, y: 46, width: 40, height: 14, type: "workspace", occupants: 6, temperature: 35, risk: "high" },
+      { id: "rm-yard", name: "Material Yard", x: 2, y: 62, width: 60, height: 30, type: "storage", occupants: 8, temperature: 36, risk: "medium" },
+    ],
+    workers: [
+      { id: "wf-1", name: "Nadia R.", x: 12, y: 20, role: "Safety Lead", status: "active", avatar: "NR" },
+      { id: "wf-2", name: "Faris H.", x: 50, y: 8, role: "Tool Coordinator", status: "active", avatar: "FH" },
+      { id: "wf-3", name: "Mei L.", x: 46, y: 22, role: "Site Engineer", status: "active", avatar: "ML" },
+      { id: "wf-4", name: "Rahim U.", x: 40, y: 52, role: "Steel Fixer", status: "active", avatar: "RU" },
+      { id: "wf-5", name: "Arun K.", x: 70, y: 18, role: "MEP Technician", status: "active", avatar: "AK" },
+      { id: "wf-6", name: "Siti N.", x: 14, y: 8, role: "Security", status: "active", avatar: "SN" },
+      { id: "wf-7", name: "Wei M.", x: 14, y: 38, role: "Laborer", status: "resting", avatar: "WM" },
+      { id: "wf-8", name: "Raj P.", x: 55, y: 50, role: "Rigger", status: "active", avatar: "RP" },
+    ],
+    equipment: [
+      { id: "ef-1", name: "Forklift FL-1", x: 35, y: 52, type: "Forklift", icon: "🚜", status: "operational" },
+      { id: "ef-2", name: "Generator G-07", x: 82, y: 18, type: "Diesel Gen", icon: "⚡", status: "maintenance" },
+      { id: "ef-3", name: "Mobile Crane", x: 55, y: 68, type: "Crane", icon: "🏗️", status: "operational" },
+      { id: "ef-4", name: "Concrete Pump", x: 20, y: 76, type: "Pump", icon: "🔧", status: "idle" },
+    ]
+  },
+  {
+    id: "fl-l5",
+    name: "Level 5",
+    level: 5,
+    width: 100, height: 100,
+    temperature: 31,
+    risk: "medium",
+    rooms: [
+      { id: "r5-core", name: "Core & Lobby", x: 10, y: 2, width: 14, height: 24, type: "core", occupants: 0, temperature: 30, risk: "low" },
+      { id: "r5-mep", name: "MEP Shaft", x: 10, y: 28, width: 8, height: 12, type: "mep", occupants: 1, temperature: 34, risk: "medium" },
+      { id: "r5-open-a", name: "Open Plan A", x: 28, y: 2, width: 34, height: 22, type: "workspace", occupants: 12, temperature: 30, risk: "low" },
+      { id: "r5-open-b", name: "Open Plan B", x: 28, y: 26, width: 34, height: 14, type: "workspace", occupants: 8, temperature: 31, risk: "low" },
+      { id: "r5-balc", name: "Balcony", x: 28, y: 42, width: 34, height: 8, type: "workspace", occupants: 2, temperature: 35, risk: "high" },
+      { id: "r5-stair", name: "Stairwell B", x: 66, y: 2, width: 6, height: 18, type: "stair", occupants: 0, temperature: 29, risk: "low" },
+      { id: "r5-elev", name: "Elevator B", x: 66, y: 22, width: 6, height: 10, type: "elevator", occupants: 0, temperature: 29, risk: "low" },
+      { id: "r5-corridor", name: "East Corridor", x: 76, y: 2, width: 18, height: 38, type: "corridor", occupants: 3, temperature: 32, risk: "low" },
+      { id: "r5-rest", name: "Rest Area", x: 76, y: 42, width: 18, height: 8, type: "workspace", occupants: 2, temperature: 29, risk: "low" },
+      { id: "r5-store", name: "Tool Store", x: 4, y: 44, width: 20, height: 10, type: "storage", occupants: 0, temperature: 30, risk: "low" },
+    ],
+    workers: [
+      { id: "w5-1", name: "Ali B.", x: 42, y: 8, role: "Carpenter", status: "active", avatar: "AB" },
+      { id: "w5-2", name: "Tan S.", x: 50, y: 14, role: "Carpenter", status: "active", avatar: "TS" },
+      { id: "w5-3", name: "Lim C.", x: 38, y: 32, role: "Electrician", status: "active", avatar: "LC" },
+      { id: "w5-4", name: "Siva K.", x: 80, y: 18, role: "Supervisor", status: "active", avatar: "SK" },
+      { id: "w5-5", name: "Muthu R.", x: 14, y: 32, role: "MEP Fitter", status: "resting", avatar: "MR" },
+      { id: "w5-6", name: "Peter W.", x: 54, y: 30, role: "Welder", status: "active", avatar: "PW" },
+    ],
+    equipment: [
+      { id: "e5-1", name: "Welder W-3", x: 50, y: 32, type: "Welding Unit", icon: "🔥", status: "operational" },
+      { id: "e5-2", name: "Scaffold Set 5", x: 80, y: 34, type: "Scaffolding", icon: "🔩", status: "operational" },
+    ]
+  },
+  {
+    id: "fl-l12",
+    name: "Level 12",
+    level: 12,
+    width: 100, height: 100,
+    temperature: 28,
+    risk: "low",
+    rooms: [
+      { id: "r12-core", name: "Core", x: 8, y: 4, width: 12, height: 22, type: "core", occupants: 0, temperature: 27, risk: "low" },
+      { id: "r12-mep", name: "MEP Riser", x: 8, y: 28, width: 8, height: 10, type: "mep", occupants: 1, temperature: 30, risk: "low" },
+      { id: "r12-open", name: "Premium Suite A", x: 24, y: 4, width: 40, height: 20, type: "workspace", occupants: 6, temperature: 26, risk: "low" },
+      { id: "r12-conf", name: "Conference", x: 24, y: 26, width: 18, height: 14, type: "workspace", occupants: 2, temperature: 26, risk: "low" },
+      { id: "r12-stair", name: "Stairwell", x: 68, y: 4, width: 6, height: 36, type: "stair", occupants: 0, temperature: 27, risk: "low" },
+      { id: "r12-cor", name: "Corridor", x: 78, y: 4, width: 16, height: 36, type: "corridor", occupants: 2, temperature: 27, risk: "low" },
+      { id: "r12-fin", name: "Finishing Zone", x: 24, y: 42, width: 40, height: 12, type: "workspace", occupants: 4, temperature: 29, risk: "medium" },
+    ],
+    workers: [
+      { id: "w12-1", name: "John C.", x: 38, y: 12, role: "Finisher", status: "active", avatar: "JC" },
+      { id: "w12-2", name: "Ken L.", x: 50, y: 10, role: "Painter", status: "active", avatar: "KL" },
+      { id: "w12-3", name: "Diana M.", x: 34, y: 46, role: "QA Inspector", status: "active", avatar: "DM" },
+      { id: "w12-4", name: "Zaki R.", x: 82, y: 20, role: "Laborer", status: "resting", avatar: "ZR" },
+    ],
+    equipment: [
+      { id: "e12-1", name: "Paint Sprayer", x: 46, y: 46, type: "Equipment", icon: "🎨", status: "operational" },
+      { id: "e12-2", name: "Hoist H-02", x: 14, y: 14, type: "Hoist", icon: "⬆️", status: "operational" },
+    ]
+  },
+  {
+    id: "fl-rf",
+    name: "Roof",
+    level: 18,
+    width: 100, height: 100,
+    temperature: 36,
+    risk: "high",
+    rooms: [
+      { id: "rf-core", name: "Roof Core", x: 8, y: 4, width: 12, height: 18, type: "core", occupants: 0, temperature: 34, risk: "low" },
+      { id: "rf-mep", name: "MEP Penthouse", x: 8, y: 24, width: 16, height: 14, type: "mep", occupants: 2, temperature: 38, risk: "medium" },
+      { id: "rf-deck", name: "Roof Deck", x: 28, y: 4, width: 48, height: 30, type: "workspace", occupants: 4, temperature: 37, risk: "high" },
+      { id: "rf-crane", name: "Crane Base", x: 28, y: 36, width: 14, height: 14, type: "workspace", occupants: 1, temperature: 36, risk: "high" },
+      { id: "rf-stair", name: "Stair Access", x: 80, y: 4, width: 6, height: 18, type: "stair", occupants: 0, temperature: 33, risk: "low" },
+      { id: "rf-margin", name: "Edge Zone", x: 50, y: 36, width: 36, height: 14, type: "corridor", occupants: 0, temperature: 38, risk: "critical" },
+    ],
+    workers: [
+      { id: "wr-1", name: "Crane Op", x: 34, y: 40, role: "Crane Operator", status: "active", avatar: "CR" },
+      { id: "wr-2", name: "Hakim M.", x: 46, y: 14, role: "Steel Worker", status: "active", avatar: "HM" },
+      { id: "wr-3", name: "Rajesh K.", x: 56, y: 20, role: "Steel Worker", status: "resting", avatar: "RK" },
+      { id: "wr-4", name: "Chen W.", x: 14, y: 30, role: "MEP Tech", status: "active", avatar: "CW" },
+    ],
+    equipment: [
+      { id: "er-1", name: "Tower Crane T-01", x: 34, y: 42, type: "Tower Crane", icon: "🏗️", status: "operational" },
+      { id: "er-2", name: "Hoist Motor", x: 18, y: 10, type: "Hoist Mech", icon: "⚙️", status: "operational" },
+    ]
+  }
 ];
 
 export const safetyMatrix = [

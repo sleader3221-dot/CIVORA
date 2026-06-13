@@ -165,6 +165,52 @@ export interface EquipmentTelemetry {
   lastCommunication: Date;
 }
 
+export interface FloorRoom {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  type: "workspace" | "corridor" | "core" | "mep" | "stair" | "elevator" | "storage" | "restroom";
+  occupants: number;
+  temperature: number;
+  risk: RiskLevel;
+}
+
+export interface WorkerPosition {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  role: string;
+  status: "active" | "resting" | "away";
+  avatar: string;
+}
+
+export interface EquipmentPosition {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  type: string;
+  icon: string;
+  status: "operational" | "idle" | "maintenance";
+}
+
+export interface FloorPlan {
+  id: string;
+  name: string;
+  level: number;
+  height: number;
+  width: number;
+  rooms: FloorRoom[];
+  workers: WorkerPosition[];
+  equipment: EquipmentPosition[];
+  temperature: number;
+  risk: RiskLevel;
+}
+
 export interface AppState {
   selectedSite: string;
   alerts: Alert[];
