@@ -1,432 +1,180 @@
-<div align="center">
+# ProofPilot AI
 
-<img src="./public/favicon.svg" alt="Civora logo" width="88" />
+Evidence-grade fraud and incident operations OS for the H0: Hack the Zero Stack with Vercel v0 and AWS Databases hackathon.
 
-# CIVORA
+Track: Track 2 - Monetizable B2B App
 
-### Every site decision, safer, leaner, and lower-carbon.
+ProofPilot AI turns suspicious fintech, SaaS, marketplace, and digital-business events into risk-scored investigation cases, linked evidence timelines, tamper-evident audit ledgers, and compliance-ready reports using Vercel, DynamoDB, and Aurora DSQL.
 
-**An AI-powered construction intelligence platform that transforms fragmented site data into explainable decisions, accountable action, and measurable impact.**
+## Problem
 
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)](https://vite.dev/)
-[![PWA](https://img.shields.io/badge/PWA-Offline_Ready-C9FF5C?logo=pwa&logoColor=111111)](https://web.dev/explore/progressive-web-apps)
-[![Tests](https://img.shields.io/badge/Tests-7_Passing-C9FF5C?logo=vitest&logoColor=111111)](#-quality-and-testing)
-[![Security](https://img.shields.io/badge/npm_audit-0_Vulnerabilities-C9FF5C?logo=npm&logoColor=111111)](#-quality-and-testing)
+Fraud and incident teams receive thousands of suspicious events, but the hard work is proving what happened, why it matters, which entities are related, and which evidence supports the final action.
 
-🏗️ **Construction intelligence for safer, more productive, and more sustainable projects**
+## Solution
 
-</div>
+ProofPilot AI provides a judge-friendly, end-to-end workflow:
 
----
+1. Launch Live Demo.
+2. Generate Suspicious Events.
+3. Score risk with deterministic, explainable rules.
+4. Auto-create critical investigation cases.
+5. Open a case with timeline, entity graph, evidence records, and notes.
+6. Verify the evidence hash chain.
+7. Generate and print an audit-ready report.
+8. Review the architecture and system health pages.
 
-## 🌍 The Challenge
+## Features
 
-Construction sites generate data from environmental sensors, inspections, workers, tools, schedules, cameras, and material records. Yet the people responsible for urgent decisions often receive that information through disconnected dashboards, spreadsheets, and radio calls.
+- Premium B2B landing page.
+- Judge Demo Mode with no login friction.
+- One-click 1,000 suspicious event generator.
+- Event ingestion API with Zod validation.
+- Deterministic risk engine with human-readable reason codes.
+- Auto case creation for high-risk activity.
+- Dashboard analytics with Recharts.
+- Event stream filters and database-mode badges.
+- Case detail page with timeline, linked evidence, notes, entity graph, ledger, and report actions.
+- React Flow entity graph.
+- Tamper-evident SHA-256 evidence ledger.
+- Ledger verification endpoint and UI.
+- HTML report generator with sanitized output.
+- Architecture page with Mermaid diagram and AWS database proof path.
+- System health page with environment readiness checklist.
+- Pricing page for B2B monetization.
+- Devpost-ready submission page.
+- Demo video script and AWS setup docs.
+- Vitest coverage for risk, ledger, event generator, report generator, and API contracts.
 
-The result is a difficult operating reality:
+## Tech Stack
 
-- Safety teams identify hazards without complete operational context.
-- Project leaders see delays after productivity has already been lost.
-- Sustainability reporting happens after decisions have been made.
-- Tool condition, worker readiness, and material availability remain siloed.
-- Multilingual crews may not receive consistent, verifiable briefings.
+- Next.js App Router
+- TypeScript strict checks
+- Tailwind CSS dependency plus custom enterprise CSS
+- shadcn/ui-style cards, badges, and buttons
+- Zod
+- Recharts
+- React Flow via `@xyflow/react`
+- Drizzle schema definitions for Aurora DSQL/PostgreSQL compatibility
+- AWS SDK v3 DynamoDB adapter
+- Vitest
+- ESLint flat config
 
-This matters at global scale. The built environment consumes **32% of global energy** and contributes **34% of global CO₂ emissions**, while construction remains one of the world's highest-risk industries.
+## AWS Databases Used
 
-> Civora turns disconnected signals into one decision loop:
-> **Sense → Understand → Recommend → Approve → Act → Verify**
+### Aurora DSQL
 
-## 💡 The Solution
+Aurora DSQL is the relational system of record for organizations, users, memberships, API keys, entities, cases, case events, risk scores, evidence ledger rows, case notes, reports, and billing plans.
 
-Civora is a construction operations command center for site managers, safety leaders, sustainability teams, workforce coordinators, and tool managers.
+Why Aurora DSQL: investigation workflows need strongly consistent case state, notes, evidence chain rows, report generation records, and SaaS billing data that can be queried relationally.
 
-It combines:
+### DynamoDB
 
-- 🛡️ Predictive and explainable safety intelligence
-- 🗺️ A spatial, real-time digital twin
-- 🌱 Carbon budgeting and circular material workflows
-- 👷 Workforce competency, fatigue, and multilingual communication
-- 🔧 Connected tool health and predictive maintenance
-- 📊 Evidence-backed impact and compliance reporting
-- ✨ A site-aware AI copilot grounded in operational context
+DynamoDB stores high-volume raw suspicious events in a single-table design:
 
-Civora does more than display information. It prioritizes risks, explains contributing factors, recommends practical controls, routes accountable actions, and records what changed.
+- `PK = ORG#organizationId`
+- `SK = EVENT#timestamp#eventId`
+- `GSI1PK = ENTITY#entityId`
+- `GSI1SK = EVENT#timestamp`
+- `GSI2PK = RISK#severity`
+- `GSI2SK = timestamp#eventId`
 
-## 🎯 Example Operational Workflow
+Why DynamoDB: raw event ingestion is bursty and access-pattern driven. DynamoDB gives a strong path for latest organization events, entity timelines, and high/critical risk feeds.
 
-At 10:22 AM, six workers are approaching an unsafe heat-exposure threshold in an MEP corridor.
+## Architecture Summary
 
-Civora:
+Vercel hosts the Next.js frontend and API routes. API routes validate payloads, call the deterministic risk engine, write raw events through the event repository, create/update cases through workflow repositories, append evidence ledger rows, verify hash chains, and generate reports.
 
-1. Detects the emerging risk across temperature, ventilation, task intensity, exposure time, and fatigue.
-2. Shows a **92% confidence score** and an **18-minute intervention window**.
-3. Recommends a cooling station, worker rotation, and shorter work blocks.
-4. Requires a supervisor to approve the response.
-5. Updates the active risk register and site action plan.
-6. Preserves an auditable record of the decision.
-7. Connects the intervention to safety, productivity, and financial impact.
+If live AWS env vars are absent, ProofPilot runs the safe demo adapter and clearly labels the UI as Demo Adapter. It does not fake live AWS mode.
 
-This workflow demonstrates Civora's central principle:
-
-> **Safety, productivity, and sustainability should reinforce one another, not compete.**
-
-## ✨ Product Workspaces
-
-### 🧭 Command Center
-
-A live executive view of the site's most important decisions.
-
-- Site safety score and active risk count
-- Workforce, productivity, carbon, and project progress KPIs
-- AI-prioritized intervention cards
-- Persistent tasks and accountable owners
-- Live operational activity stream
-- Modeled monthly value creation
-- Multi-project site switching
-
-### 🗺️ Live Digital Twin
-
-A spatial representation of people, conditions, assets, and risk.
-
-- Interactive construction zones
-- Risk, workforce, environmental, and asset layers
-- Live temperature, air-quality, and noise drift
-- Worker and sensor counts by zone
-- Two-hour risk forecasting
-- Spatial conflict and resource insights
-- Privacy-preserving edge-vision demonstration
-
-### 🛡️ Safety Intelligence
-
-Explainable decision support for proactive site safety.
-
-- Prioritized live risk register
-- Risk-factor contribution analysis
-- Confidence and data-quality indicators
-- Human-in-the-loop approvals
-- Likelihood × impact matrix
-- Field observation reporting
-- PPE scan workflow
-- Emergency drill simulation
-- Geofence and permit-to-work concepts
-- Multilingual toolbox briefing generation
-
-### 🌱 Carbon & Circularity
-
-Daily construction decisions translated into climate and financial value.
-
-- Project carbon budget
-- Baseline and optimized forecast scenarios
-- Embodied and operational carbon views
-- Waste diversion analysis
-- Water and clean-energy indicators
-- Digital material passports
-- Circular material matching
-- Transfer reservation workflow
-- Supplier sustainability scoring
-- Responsible sourcing visibility
-
-### 👷 Workforce Intelligence
-
-Inclusive workforce planning without intrusive surveillance.
-
-- Live crew readiness directory
-- Competency and certification coverage
-- Fatigue-aware shift planning
-- AI-assisted shift optimization
-- Microlearning recommendations
-- Briefings in English, Bahasa Melayu, Tamil, Bengali, and Mandarin
-- Briefing playback state and comprehension tracking
-- Privacy-by-design messaging
-
-### 🔧 Tools & Assets
-
-Connected asset intelligence inspired by real construction workflows.
-
-- Fleet utilization and live status
-- Battery, location, and health monitoring
-- Tool vibration anomaly waveform
-- Predictive service recommendations
-- Preventive maintenance scheduling
-- Ultra-wideband location simulation
-- Low-carbon charging windows
-- Asset circularity and life-extension metrics
-
-### 📊 Impact Reports
-
-Operational evidence transformed into stakeholder-ready reporting.
-
-- Safety, carbon, productivity, and uptime summaries
-- Plain-text impact report export
-- GHG Protocol, GRI, CIDB NCP 2030, and ISO 45001 mapping concepts
-- Data-lineage visualization
-- Immutable evidence-trail concept
-- Scheduled stakeholder reports
-- Confidence and methodology disclosure
-
-## 🚀 Advanced Capabilities
-
-Civora includes **50+ integrated product capabilities**, including:
-
-| Intelligence | Operations | Trust & Experience |
-|---|---|---|
-| Predictive safety scoring | Multi-project switching | Human approval controls |
-| Explainable risk factors | Persistent alerts and tasks | Transparent demo-data labels |
-| Context-aware AI copilot | Real-time telemetry simulation | Data-lineage visibility |
-| Carbon scenario optimization | Digital twin layers | Audit-trail concepts |
-| Fatigue-aware planning | Preventive maintenance | Offline-capable PWA |
-| Material circularity matching | Precision asset location | Dark and light themes |
-| Tool vibration analysis | Multilingual briefings | Responsive mobile navigation |
-| Two-hour risk forecasting | Report export | Reduced-motion support |
-
-## 🏗️ Architecture
-
-```mermaid
-flowchart LR
-    A["Sensors, Cameras & Tool Tags"] --> B["Edge Processing"]
-    C["BIM, Workforce & Procurement"] --> D["Integration Gateway"]
-    B --> E["Validated Site Events"]
-    D --> E
-    E --> F["Operational Site Graph"]
-    F --> G["Risk & Forecast Models"]
-    F --> H["Optimization Engine"]
-    F --> I["Evidence-Grounded Copilot"]
-    G --> J["Policy & Approval Layer"]
-    H --> J
-    I --> J
-    J --> K["Civora PWA"]
-    K --> L["Action, Audit & Impact"]
-```
-
-### Current Reference Implementation
-
-The current application uses:
-
-- A shared, strictly typed construction domain model
-- Deterministic simulated telemetry updated every four seconds
-- Browser persistence for alerts, tasks, projects, and theme
-- Route-level lazy loading for faster initial rendering
-- Workbox-powered offline caching
-- No external credentials or fragile third-party runtime dependencies
-
-### Production Evolution
-
-The architecture is designed to replace demo adapters with verified:
-
-- MQTT and HTTPS sensor ingestion
-- BIM and geospatial data
-- Workforce and competency systems
-- Procurement and material records
-- Connected tool and asset platforms
-- Time-series storage and immutable evidence storage
-- Calibrated forecasting models and constrained optimization
-- Enterprise authentication, authorization, and observability
-
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full production direction.
-
-## 🧰 Technology Stack
-
-| Layer | Technology |
-|---|---|
-| UI | React 19 |
-| Language | TypeScript 6 |
-| Build system | Vite 8 |
-| Visualization | Recharts 3 |
-| Icons | Lucide React |
-| Offline support | Vite PWA + Workbox |
-| Testing | Vitest + Testing Library |
-| Styling | Custom responsive CSS design system |
-| Persistence | Browser local storage |
-
-## ⚡ Getting Started
-
-### Prerequisites
-
-- Node.js 20 or later
-- npm 10 or later
-
-### Install and Run
+## Local Setup
 
 ```bash
-git clone https://github.com/sleader3221-dot/CIVORA.git
-cd CIVORA
 npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite, normally:
+Open `http://localhost:3000`.
 
-```text
-http://localhost:5173
-```
+## Environment Variables
 
-### Production Build
+Copy `.env.example` to `.env.local` for local live-mode testing:
 
 ```bash
-npm run build
-npm run preview
+DATABASE_URL=
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+DYNAMODB_EVENTS_TABLE=ProofPilotEvents
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_DEMO_MODE=true
 ```
 
-The deployable static application is generated in `dist/`.
+Do not commit `.env` or `.env.local`.
 
-## ✅ Quality and Testing
+## Demo Mode
+
+Demo mode works without AWS credentials. It uses deterministic synthetic Northstar Pay data and in-memory repositories to support judge testing.
+
+## Live AWS Mode
+
+Live AWS mode becomes available only when both DynamoDB and Aurora DSQL/PostgreSQL environment variables are configured. System Health shows whether each adapter is ready without displaying secret values.
+
+## Vercel Deployment
+
+1. Push the repository to GitHub.
+2. Import the repo into Vercel.
+3. Set the environment variables from `.env.example`.
+4. Deploy.
+5. Visit `/system-health` and confirm the adapter mode.
+
+## Judge Testing Instructions
+
+1. Open the Vercel link.
+2. Click Launch Live Demo.
+3. Open Judge Demo Mode.
+4. Click Generate Suspicious Events.
+5. Open the latest critical case.
+6. Review risk explanation, timeline, and entity graph.
+7. Click Verify Evidence Chain.
+8. Click Generate Report.
+9. Visit `/architecture`.
+10. Visit `/system-health`.
+
+## Commands
 
 ```bash
-# Strict TypeScript validation
-npm run check
-
-# Unit and integration tests
+npm run lint
+npm run typecheck
 npm run test
-
-# Optimized production PWA build
 npm run build
-
-# Dependency vulnerability audit
-npm audit
 ```
 
-Current verified status:
+## Screenshots Checklist
 
-| Quality Gate | Result |
-|---|---|
-| TypeScript check | ✅ Passed |
-| Automated tests | ✅ 7/7 passed |
-| Production build | ✅ Passed |
-| npm security audit | ✅ 0 vulnerabilities |
-| Route-level code splitting | ✅ Enabled |
-| Offline PWA generation | ✅ Enabled |
+- Landing page.
+- Judge Demo Mode.
+- Dashboard.
+- Ingest API page.
+- Events page.
+- Cases page.
+- Case detail page.
+- Entity graph.
+- Ledger verification.
+- Report preview.
+- Architecture page.
+- System health page.
+- Vercel environment settings.
+- DynamoDB table and GSIs.
+- Aurora DSQL schema/migration proof.
 
-## 🎬 Product Walkthrough
+## Demo Video Script
 
-Use this path to explore the platform's connected workflows:
+See [DEMO_VIDEO_SCRIPT.md](./DEMO_VIDEO_SCRIPT.md).
 
-1. **Command Center:** introduce the heat-risk scenario.
-2. **Dispatch Response:** approve the recommended intervention.
-3. **Digital Twin:** select the MEP Corridor and show the two-hour forecast.
-4. **Safety Intelligence:** explain the five contributing risk factors.
-5. **Carbon & Circularity:** activate the AI-optimized scenario.
-6. **Circular Matchmaker:** reserve the surplus plywood transfer.
-7. **Tools & Assets:** schedule preventive service for the drifting grinder.
-8. **Impact Reports:** export a transparent evidence report.
-9. **Civora Copilot:** ask, `Find carbon savings`.
+## Bonus Content Checklist
 
-## 📈 Platform Value
-
-| Outcome | How Civora Contributes |
-|---|---|
-| **Safer work** | Identifies emerging conditions, explains risk factors, and routes accountable interventions |
-| **Higher productivity** | Connects workforce, schedule, zone, and asset signals to reduce avoidable disruption |
-| **Lower environmental impact** | Makes carbon, energy, water, waste, and material circularity visible during operations |
-| **Better asset performance** | Detects tool-health anomalies and supports preventive maintenance and charging decisions |
-| **More inclusive communication** | Delivers multilingual briefings and tracks workforce comprehension |
-| **Trusted reporting** | Preserves source context, methodology, confidence, approvals, and evidence lineage |
-
-## 💼 Business Potential
-
-### Primary Customers
-
-- General contractors
-- Large specialist subcontractors
-- Property developers
-- Infrastructure project operators
-
-### Daily Users
-
-- Site managers
-- HSE and safety leads
-- Sustainability managers
-- Workforce coordinators
-- Tool and asset managers
-- Project directors
-
-### Commercial Model
-
-- Platform subscription per active project
-- Tiered pricing by connected workers, tools, and sensors
-- Enterprise integration and reporting packages
-- Optional deployment, onboarding, and assurance services
-
-### Pilot Strategy
-
-Begin with a **6–8 week heat-risk and connected-tool pilot** on one active project. Measure:
-
-- Alert precision and response time
-- Worker heat-exposure minutes
-- Unplanned tool downtime
-- Supervisor adoption
-- Briefing comprehension
-- Avoided operational cost
-
-## 🔐 Responsible AI, Safety, and Privacy
-
-Civora is **decision support**, not an autonomous safety authority.
-
-- A responsible supervisor approves all safety-critical recommendations.
-- Confidence, contributing factors, and data freshness remain visible.
-- Production models require prospective validation before operational use.
-- Edge vision is designed to remove personal data before transmission.
-- Face recognition is explicitly outside the product scope.
-- Access control, retention limits, worker consultation, and audit logs are production requirements.
-- Carbon and financial values require verified source data before external assurance.
-
-> **Reference implementation disclosure:** Current telemetry, AI outputs, project values, and impact metrics are deterministic demonstration data. This implementation does not claim live production integrations, certified safety compliance, or assured carbon accounting.
-
-## 📁 Project Structure
-
-```text
-CIVORA/
-├── docs/                    # Research, architecture, features, and product materials
-├── public/                  # PWA icons, redirects, and security headers
-├── src/
-│   ├── components/         # Shared interface primitives and application shell
-│   ├── data/               # Deterministic demonstration dataset
-│   ├── hooks/              # Persistence and live telemetry hooks
-│   ├── lib/                # Utilities and unit tests
-│   ├── test/               # Test environment setup
-│   ├── views/              # Seven product workspaces
-│   ├── App.tsx             # Shared application state and lazy routing
-│   └── styles.css          # Complete responsive design system
-├── package.json
-└── vite.config.ts
-```
-
-## 📚 Project Documentation
-
-- 🏗️ [System architecture](docs/ARCHITECTURE.md)
-- ✨ [Feature matrix](docs/FEATURE_MATRIX.md)
-
-## 🗺️ Roadmap
-
-- [x] Integrated seven-workspace prototype
-- [x] Real-time deterministic telemetry
-- [x] Persistent operational workflows
-- [x] Installable offline PWA
-- [x] Automated tests and production build
-- [ ] Conduct construction professional interviews
-- [ ] Connect environmental and tool telemetry
-- [ ] Add BIM and geospatial adapters
-- [ ] Validate safety models prospectively
-- [ ] Add enterprise identity and role-based access
-- [ ] Run an instrumented live-site pilot
-
-## 📖 Research Basis
-
-- [UNEP Global Status Report for Buildings and Construction 2024/2025](https://www.unep.org/resources/report/global-status-report-buildings-and-construction-20242025)
-- [ILO: Occupational safety and health management in construction](https://www.ilo.org/meetings-and-events/occupational-safety-and-health-management-construction-sector-3)
-- [CIDB Malaysia Construction 4.0](https://www.cidb.gov.my/eng/cr-4-0/)
-- [CIDB National Construction Policy 2030](https://www.cidb.gov.my/eng/national-construction-policy-ncp-2030/)
-- [Hilti: Helping customers succeed with software](https://reports.hilti.group/2024/our-stories/helping-customers-succeed-with-software)
-
----
-
-<div align="center">
-
-### 🏗️ Build intelligently. Protect people. Waste less.
-
-**Civora helps construction teams see sooner, decide better, and prove what changed.**
-
-[Explore the Architecture](docs/ARCHITECTURE.md) · [Review the Feature Matrix](docs/FEATURE_MATRIX.md)
-
-</div>
+- Public content phrase included on `/submission`.
+- Hashtag included: `#H0Hackathon`.
+- AWS screenshot checklist included.
+- Vercel deployment readiness documented.
+- Security posture documented in [SECURITY.md](./SECURITY.md).
