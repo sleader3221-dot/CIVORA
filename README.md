@@ -110,7 +110,7 @@ flowchart TD
     A --> C[👷 Workforce Inputs]
     A --> D[🦺 Safety Events]
     A --> E[🛠️ Asset Status]
-    A --> F[🌱 Carbon & Material Data]
+    A --> F[🌱 Carbon and Material Data]
 
     B --> G[🧠 CIVORA Intelligence Layer]
     C --> G
@@ -279,10 +279,10 @@ CIVORA/
 │   ├── components/          # Reusable UI components
 │   ├── data/                # Demo telemetry and construction domain data
 │   ├── hooks/               # Custom React hooks for state and behavior
-│   ├── pages/               # Main product workspaces
-│   ├── types/               # TypeScript domain models
-│   ├── utils/               # Intelligence rules, helpers, calculations
-│   └── tests/               # Vitest tests
+│   ├── pages/                # Main product workspaces
+│   ├── types/                # TypeScript domain models
+│   ├── utils/                # Intelligence rules, helpers, calculations
+│   └── tests/                # Vitest tests
 ├── package.json             # Scripts and dependencies
 ├── vite.config.ts           # Vite + PWA configuration
 └── README.md                # Project documentation
@@ -564,5 +564,3 @@ GitHub: [@sleader3221-dot](https://github.com/sleader3221-dot)
 This project is currently intended for learning, demonstration, portfolio, and hackathon evaluation.
 
 ---
-
-## ⭐
